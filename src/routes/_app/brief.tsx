@@ -189,6 +189,7 @@ function BriefPage() {
         <CertifyRitual
           title="Issue the strategic brief"
           holder={holder}
+          verb="Issue"
           onCancel={() => setIssuing(false)}
           onConfirm={() => {
             issueStage("brief");

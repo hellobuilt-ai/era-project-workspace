@@ -7,6 +7,7 @@ import { Stamp } from "@/components/record/Stamp";
 import { CertifyRitual } from "@/components/record/CertifyRitual";
 import { stills } from "@/lib/era/stills";
 import { useStageProgress } from "@/lib/era/progress";
+import { FloorPlate } from "@/components/record/FloorPlate";
 import { cn, gbp } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/packages")({ component: PackagesPage });
@@ -110,10 +111,20 @@ function PackagesPage() {
         ))}
       </ol>
 
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-8 lg:px-12">
+        <p className="label-track text-petrol">Packages as hatches</p>
+        <h2 className="mt-1 font-display text-[length:var(--text-display-md)]">Named on the plate</h2>
+        <p className="standfirst mt-3 text-muted">
+          Each room carries its package. Awarding them is what opens the weeks.
+        </p>
+        <FloorPlate initialLayer="packages" />
+      </section>
+
       {issuing && (
         <CertifyRitual
           title="Award the packages"
           holder={holder}
+          verb="Issue"
           onCancel={() => setIssuing(false)}
           onConfirm={() => {
             issueStage("procure");

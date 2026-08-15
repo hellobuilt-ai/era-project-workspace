@@ -9,6 +9,7 @@ import { stills } from "@/lib/era/stills";
 import { cn } from "@/lib/utils";
 import { useStageProgress } from "@/lib/era/progress";
 import { weekStatus } from "@/lib/era/stages";
+import { FloorPlate } from "@/components/record/FloorPlate";
 
 export const Route = createFileRoute("/_app/programme")({ component: ProgrammePage });
 
@@ -60,6 +61,7 @@ function ProgrammePage() {
   const weekN = constructWeek ?? 1;
   const [focusWeek, setFocusWeek] = useState(constructLive ? weekN : 1);
   const [issuing, setIssuing] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const stripRef = useRef<HTMLDivElement>(null);
   const skipScroll = useRef(true);
   const groups = useMemo(() => groupWeeks(weeks), []);
@@ -76,6 +78,27 @@ function ProgrammePage() {
     const node = stripRef.current?.querySelector<HTMLElement>(`[data-week="${focusWeek}"]`);
     node?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
   }, [focusWeek]);
+
+  useEffect(() => {
+    if (!playing) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setFocusWeek(14);
+      setPlaying(false);
+      return;
+    }
+    const id = window.setInterval(() => {
+      setFocusWeek((w) => {
+        if (w >= 14) {
+          window.clearInterval(id);
+          setPlaying(false);
+          return 14;
+        }
+        return w + 1;
+      });
+    }, 700);
+    return () => window.clearInterval(id);
+  }, [playing]);
 
   function move(id: number, focus = true) {
     const next = weeks.find((w) => w.id === id);
@@ -128,6 +151,16 @@ function ProgrammePage() {
                 : `This stage is ahead — live stage is ${live.n} ${live.label}. Time is not drag-resized.`}
           </p>
           <div className="mt-8 flex flex-col items-start gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setFocusWeek(1);
+                setPlaying(true);
+              }}
+              className="inline-flex min-h-11 items-center label-track text-ice hover:text-paper"
+            >
+              {playing ? "Playing the fourteen weeks" : "Play the fourteen weeks"}
+            </button>
             {constructLive && mayCompleteWeek(focusWeek) && (
               <button
                 type="button"
@@ -225,10 +258,18 @@ function ProgrammePage() {
         ))}
       </div>
 
+      <section className="border-t border-white/10 bg-warm px-5 py-10 sm:px-10 lg:px-14">
+        <p className="label-track text-petrol">Time on the plan</p>
+        <h2 className="mt-1 font-display text-[length:var(--text-display-md)]">Where the week sits</h2>
+        <p className="standfirst mt-3 text-muted">Rooms light as their weeks arrive. Time is not drag-resized.</p>
+        <FloorPlate initialLayer="time" />
+      </section>
+
       {issuing && (
         <CertifyRitual
           title="Certify practical completion"
           holder={holder}
+          verb="Certify"
           onCancel={() => setIssuing(false)}
           onConfirm={() => {
             issueStage("construct");

@@ -34,19 +34,21 @@ export const chapterOf: Record<StageId, string[]> = {
 
 export const lensMeta: Record<
   Lens,
-  { name: string; privilege: string; org: string; initials: string; expires?: string }
+  { name: string; privilege: string; org: string; initials: string; expires?: string; whisper: string }
 > = {
   era: {
     name: "David Evans",
     privilege: "ERA · Project Management",
     org: "Full record",
     initials: "DE",
+    whisper: "Full record. You may certify.",
   },
   client: {
     name: "Amelia Croft",
     privilege: "Client sponsor",
     org: "Harrow & Vale LLP",
     initials: "AC",
+    whisper: "This is your sentence — the quality band.",
   },
   guest: {
     name: "Saira Khan",
@@ -54,5 +56,6 @@ export const lensMeta: Record<
     org: "Pritchard Hale",
     initials: "SK",
     expires: "29 Aug 2026",
+    whisper: "Licence pack only. Not a public link.",
   },
 };

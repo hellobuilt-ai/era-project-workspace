@@ -7,6 +7,7 @@ import { Stamp } from "@/components/record/Stamp";
 import { CertifyRitual } from "@/components/record/CertifyRitual";
 import { stills } from "@/lib/era/stills";
 import { useStageProgress } from "@/lib/era/progress";
+import { FloorPlate } from "@/components/record/FloorPlate";
 
 export const Route = createFileRoute("/_app/design")({ component: DesignPage });
 
@@ -105,10 +106,20 @@ function DesignPage() {
         ))}
       </ol>
 
+      <section className="mx-auto max-w-6xl px-4 pb-14 sm:px-8 lg:px-12">
+        <p className="label-track text-petrol">The drawing on the room</p>
+        <h2 className="mt-1 font-display text-[length:var(--text-display-md)]">Authorship, seated</h2>
+        <p className="standfirst mt-3 text-muted">
+          Hover the west light. HV-FAR-DRW-004 is the quality band, drawn.
+        </p>
+        <FloorPlate initialLayer="drawings" />
+      </section>
+
       {issuing && (
         <CertifyRitual
           title="Issue first drawings"
           holder={holder}
+          verb="Issue"
           onCancel={() => setIssuing(false)}
           onConfirm={() => {
             issueStage("design");

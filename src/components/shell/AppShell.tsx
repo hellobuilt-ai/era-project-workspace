@@ -11,6 +11,9 @@ import { SignedIn, UserButton } from "@/lib/auth/gates";
 import { StagePassage } from "@/components/record/StagePassage";
 import { FilmStrip } from "@/components/record/FilmStrip";
 import { PulseBar } from "@/components/record/PulseBar";
+import { ReturnSlip } from "@/components/record/ReturnSlip";
+import { SequenceFilm } from "@/components/record/SequenceFilm";
+import { StageCompare } from "@/components/record/StageCompare";
 import { useStageProgress } from "@/lib/era/progress";
 import {
   STAGE_ORDER,
@@ -22,10 +25,11 @@ import {
 
 export function AppShell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { lens, setLens, setCommandOpen, commandOpen, passage, markVisit, visit } = useEra();
-  const { currentStage } = useStageProgress();
+  const { lens, setLens, setCommandOpen, commandOpen, passage, markVisit, visit, filmOpen, setCompareWith } =
+    useEra();
+  const { currentStage, decisions } = useStageProgress();
   const [open, setOpen] = useState(false);
-  const [returned, setReturned] = useState<string | null>(null);
+  const [slip, setSlip] = useState<{ sinceLeft: boolean } | null>(null);
   const meta = lensMeta[lens];
   const items = navItems.filter((n) => n.lenses.includes(lens));
   const navigate = useNavigate();
@@ -43,7 +47,7 @@ export function AppShell() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (commandOpen || passage) return;
+      if (commandOpen || passage || filmOpen) return;
       const el = e.target as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
       const viewing = stageFromPath(pathname, currentStage);
@@ -56,6 +60,8 @@ export function AppShell() {
         if (!prev) return;
         e.preventDefault();
         void navigate({ to: "/stage/$stageId", params: { stageId: prev.id } });
+      } else if (e.key === "Escape") {
+        setCompareWith(null);
       } else if (/^[0-6]$/.test(e.key)) {
         const id = STAGE_ORDER[Number(e.key)];
         if (!id) return;
@@ -65,19 +71,17 @@ export function AppShell() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [commandOpen, passage, pathname, currentStage, navigate]);
+  }, [commandOpen, passage, filmOpen, pathname, currentStage, navigate, setCompareWith]);
 
   useEffect(() => {
-    if (visit && Date.now() - visit.at > 90_000) {
-      const live = stageBook[currentStage];
-      setReturned(
-        visit.stage !== currentStage
-          ? `The sequence moved. ${live.n} ${live.label} is live.`
-          : `${live.n} ${live.label} is as you left it.`,
-      );
+    const waiting = decisions.some((d) => d.status === "open" || d.status === "countered");
+    const sinceLeft = Boolean(visit && Date.now() - visit.at > 90_000);
+    const seen = typeof sessionStorage !== "undefined" && sessionStorage.getItem("era-slip") === "1";
+    if (!seen && (waiting || sinceLeft)) {
+      setSlip({ sinceLeft });
     }
     markVisit(currentStage);
-    // first mount only — visit is the prior persist
+    // first mount only
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -121,21 +125,20 @@ export function AppShell() {
           <div className="hidden lg:block">
             <PulseBar pathname={pathname} />
           </div>
-          {returned && (
-            <div className="flex items-center justify-between gap-3 border-b border-hairline bg-paper px-4 py-2.5 sm:px-8">
-              <p className="min-w-0 truncate text-body-sm text-ink/80">
-                <span className="label-track mr-2 text-petrol">Since you left</span>
-                {returned}
-              </p>
-              <button
-                type="button"
-                className="shrink-0 font-mono text-micro text-muted hover:text-ink"
-                onClick={() => setReturned(null)}
-              >
-                Dismiss
-              </button>
-            </div>
+          {slip && (
+            <ReturnSlip
+              sinceLeft={slip.sinceLeft}
+              onDismiss={() => {
+                setSlip(null);
+                try {
+                  sessionStorage.setItem("era-slip", "1");
+                } catch {
+                  /* ignore */
+                }
+              }}
+            />
           )}
+          <StageCompare />
           {lens === "guest" && (
             <div className="bg-ink px-4 py-2 text-center text-body-sm text-ice sm:px-8">
               Issued to {meta.name} · Licence pack · expires {meta.expires} · not a public link
@@ -173,6 +176,7 @@ export function AppShell() {
 
       <CommandPalette />
       <StagePassage />
+      <SequenceFilm />
     </div>
   );
 }
@@ -224,11 +228,11 @@ function NavList({
   pathname: string;
   onNavigate?: () => void;
 }) {
-  const { currentStage } = useStageProgress();
+  const { currentStage, lens } = useStageProgress();
   const chapter = stageFromPath(pathname, currentStage);
   const chapterPaths = chapterOf[chapter];
   const here = items.filter((n) => chapterPaths.includes(n.to));
-  const elsewhere = items.filter((n) => !chapterPaths.includes(n.to));
+  const elsewhere = lens === "guest" ? [] : items.filter((n) => !chapterPaths.includes(n.to));
   const viewed = stageBook[chapter];
   const [more, setMore] = useState(false);
 
@@ -307,8 +311,9 @@ function ItemList({
 }
 
 function StageStrip({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
-  const { currentStage, live, qualityCertified, setFocusDecision, tone, constructWeek, issued } =
+  const { currentStage, live, qualityCertified, setFocusDecision, tone, constructWeek, issued, lens } =
     useStageProgress();
+  const setFilmOpen = useEra((s) => s.setFilmOpen);
   const viewing = stageFromPath(pathname, currentStage);
   const viewed = stageBook[viewing];
   const nextLive = adjacentStages(currentStage).next;
@@ -326,7 +331,21 @@ function StageStrip({ pathname, onNavigate }: { pathname: string; onNavigate?: (
 
   return (
     <div>
-      <p className="label-track px-2 text-paper/40">Sequence</p>
+      <p className="label-track flex items-center justify-between px-2 text-paper/40">
+        <span>Sequence</span>
+        {lens !== "guest" && (
+          <button
+            type="button"
+            onClick={() => {
+              setFilmOpen(true);
+              onNavigate?.();
+            }}
+            className="hit-44 px-2 text-ice hover:text-paper"
+          >
+            Play
+          </button>
+        )}
+      </p>
       <div className="mt-2 px-1">
         <FilmStrip pathname={pathname} onNavigate={onNavigate} />
       </div>
@@ -347,6 +366,7 @@ function StageStrip({ pathname, onNavigate }: { pathname: string; onNavigate?: (
               : `${viewed.n} ${viewed.label} · ${t === "passed" ? "closed" : t}`}
         </p>
         {action &&
+          lens !== "guest" &&
           (action.hash ? (
             <Link
               to="/"
@@ -415,6 +435,7 @@ function Invitation({
         <div key={lens} className={cn(turned && "invite-face")}>
           <p className="font-serif text-lg leading-tight">{meta.name}</p>
           <p className="mt-0.5 text-body-sm leading-snug text-ink/80">{meta.privilege}</p>
+          <p className="mt-2 text-body-sm leading-snug text-ink">{meta.whisper}</p>
           <p
             className={cn(
               "mt-0.5 font-mono text-micro tracking-wide",

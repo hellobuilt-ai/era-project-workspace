@@ -40,6 +40,10 @@ type EraState = {
   resetSequence: () => void;
   visit: VisitMark | null;
   markVisit: (stage: StageId) => void;
+  compareWith: StageId | null;
+  setCompareWith: (id: StageId | null) => void;
+  filmOpen: boolean;
+  setFilmOpen: (open: boolean) => void;
 };
 
 const INITIAL_ISSUED: Partial<Record<StageId, boolean>> = { lease: true };
@@ -144,6 +148,10 @@ export const useEra = create<EraState>()(
       resetSequence: () => get().replayFrom("strategic"),
       visit: null,
       markVisit: (stage) => set({ visit: { at: Date.now(), stage } }),
+      compareWith: null,
+      setCompareWith: (compareWith) => set({ compareWith }),
+      filmOpen: false,
+      setFilmOpen: (filmOpen) => set({ filmOpen }),
     }),
     {
       name: "era-record-v3",

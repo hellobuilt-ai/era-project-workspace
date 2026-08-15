@@ -25,6 +25,7 @@ const GROUP_ORDER: DeskGroup[] = ["Needs you", "Stage", "Floor", "Record", "Fees
 export function CommandPalette() {
   const { commandOpen, setCommandOpen, lens, decisions: liveDecisions } = useEra();
   const { currentStage, resetSequence, replayFrom, setFocusDecision } = useStageProgress();
+  const setFilmOpen = useEra((s) => s.setFilmOpen);
   const [q, setQ] = useState("");
   const [sel, setSel] = useState(0);
   const navigate = useNavigate();
@@ -85,6 +86,13 @@ export function CommandPalette() {
         id: "reset-sequence",
         label: "Replay from 01 Strategic",
         hint: "Reset the sequence",
+        to: "/",
+        group: "Stage",
+      });
+      desk.push({
+        id: "play-film",
+        label: "Play the sequence",
+        hint: "00–06 as a film",
         to: "/",
         group: "Stage",
       });
@@ -208,6 +216,11 @@ export function CommandPalette() {
     if (item.id === "reset-sequence") {
       resetSequence();
       void navigate({ to: "/" });
+      close();
+      return;
+    }
+    if (item.id === "play-film") {
+      setFilmOpen(true);
       close();
       return;
     }

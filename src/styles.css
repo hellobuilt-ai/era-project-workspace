@@ -587,8 +587,118 @@
     outline-color: var(--color-ice);
   }
 
-  .film-frame.is-viewing {
+  .film-frame.is-held {
     outline-color: var(--color-paper);
+    outline-width: 2px;
+  }
+
+  .return-slip {
+    margin: 16px 16px 0;
+    padding: 20px;
+    background: var(--color-paper);
+    border: 1px solid var(--color-hairline);
+    box-shadow: var(--shadow-border);
+  }
+
+  @media (min-width: 640px) {
+    .return-slip {
+      margin: 20px 32px 0;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .return-slip {
+      margin: 20px 40px 0;
+    }
+  }
+
+  .compare-plate {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    border-bottom: 1px solid rgb(255 255 255 / 0.1);
+  }
+
+  .signature-plate {
+    min-height: 5.5rem;
+    padding: 16px;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    background: rgb(11 31 51 / 0.35);
+  }
+
+  .signature-press {
+    display: block;
+    padding: 16px 18px 14px;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    text-align: left;
+    transition:
+      transform var(--motion-quick) var(--ease-out),
+      background-color var(--motion-quick) var(--ease-out);
+  }
+
+  .signature-press:hover {
+    background: var(--color-ice);
+  }
+
+  .signature-press:active {
+    transform: scale(0.96);
+  }
+
+  .floor-layers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    background: var(--color-hairline);
+    padding: 2px;
+    width: fit-content;
+  }
+
+  .floor-layer {
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    background: var(--color-warm);
+    transition:
+      background-color var(--motion-quick) var(--ease-out),
+      color var(--motion-quick) var(--ease-out);
+  }
+
+  .floor-layer.is-on {
+    color: var(--color-paper);
+    background: var(--color-ink);
+  }
+
+  .floor-hatch-line {
+    stroke: var(--color-petrol);
+    stroke-width: 1;
+  }
+
+  .floor-room.is-packaged {
+    fill: rgb(0 79 113 / 0.04);
+  }
+
+  .floor-room.is-live-week {
+    fill: rgb(126 182 204 / 0.28);
+  }
+
+  .floor-room.is-passed-week {
+    fill: rgb(11 31 51 / 0.06);
+  }
+
+  .floor-room.is-ahead-week {
+    fill: rgb(11 31 51 / 0.015);
+  }
+
+  .floor-room-sub {
+    fill: var(--color-muted);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    pointer-events: none;
   }
 
   .pulse-bar {

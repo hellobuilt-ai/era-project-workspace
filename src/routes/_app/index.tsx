@@ -166,7 +166,7 @@ function RecordCover() {
           <p className="label-track text-petrol">The floor itself</p>
           <h2 className="mt-1 font-display text-[length:var(--text-display-md)]">14 Saffron Hill</h2>
           <p className="standfirst mt-3 text-muted">
-            Two floors. Named rooms. The brief is the plan — not a PDF pinned to a wall.
+            Two floors. Named rooms, drawings, packages, and weeks — the brief is the plan.
           </p>
           <FloorPlate />
         </div>

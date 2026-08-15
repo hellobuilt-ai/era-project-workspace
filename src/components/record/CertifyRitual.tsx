@@ -19,12 +19,14 @@ export function CertifyRitual({
   title,
   holder,
   blocked,
+  verb = "Certify",
   onConfirm,
   onCancel,
 }: {
   title: string;
   holder: string;
   blocked?: boolean;
+  verb?: "Certify" | "Issue";
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -33,6 +35,7 @@ export function CertifyRitual({
   const reduced = usePrefersReducedMotion();
   const person = people.find((p) => p.name === holder);
   const named = person ? `${holder}, ${person.role}` : holder;
+  const today = "15 Aug 2026";
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -51,7 +54,7 @@ export function CertifyRitual({
   const seat = () => {
     if (blocked) return;
     setStep("done");
-    timer.current = window.setTimeout(onConfirm, reduced ? 120 : 560);
+    timer.current = window.setTimeout(onConfirm, reduced ? 120 : 720);
   };
 
   return (
@@ -62,43 +65,58 @@ export function CertifyRitual({
         aria-labelledby="certify-title"
         className="w-full max-w-lg border border-white/15 bg-ink px-6 py-8 sm:px-10"
       >
-        <p className="label-track text-ice">Certification</p>
+        <p className="label-track text-ice">{verb === "Issue" ? "Issue onto the record" : "Named certification"}</p>
         <h2 id="certify-title" className="mt-3 font-serif text-3xl leading-tight">
           {title}
         </h2>
-        <p className="mt-4 text-[15px] text-paper/70">
-          This plate names {holder}. Off-record confirmation is not a decision. A comment cannot
-          certify.
+        <p className="mt-4 text-body text-paper/70">
+          This plate names {holder}. Off-record confirmation is not a decision. A comment cannot{" "}
+          {verb === "Issue" ? "issue" : "certify"}.
         </p>
-        <dl className="mt-6 space-y-2 border-y border-white/10 py-4 font-mono text-[13px]">
+        <dl className="mt-6 space-y-2 border-y border-white/10 py-4 font-mono text-body-sm">
           <div className="flex justify-between gap-4">
-            <dt className="text-paper/50">Lens holder</dt>
-            <dd>{holder}</dd>
+            <dt className="text-paper/50">Named person</dt>
+            <dd>{named}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-paper/50">Record</dt>
+            <dd>{project.code}</dd>
           </div>
           <div className="flex justify-between gap-4">
             <dt className="text-paper/50">Certified construction</dt>
             <dd>{gbp(project.certainty)}</dd>
           </div>
           <div className="flex justify-between gap-4">
-            <dt className="text-paper/50">Fee impact</dt>
-            <dd>£0 · no variation</dd>
+            <dt className="text-paper/50">Date</dt>
+            <dd className="tabular-nums">{today}</dd>
           </div>
         </dl>
 
-        <div className="mt-6 grid h-[4.5rem] w-40 place-items-center border border-dashed border-white/20">
+        <div className="signature-plate mt-6">
           {step === "done" ? (
-            <Stamp kind="certified" invert press />
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="font-serif text-2xl leading-none">{holder}</p>
+                <p className="mt-2 font-mono text-micro text-paper/45">{today} · {project.code}</p>
+              </div>
+              <Stamp kind="certified" invert press />
+            </div>
           ) : (
-            <span className="label-track text-paper/35">Awaiting press</span>
+            <div>
+              <p className="label-track text-paper/35">Signature</p>
+              <p className="mt-3 border-b border-dashed border-white/20 pb-2 font-serif text-2xl text-paper/25">
+                {holder}
+              </p>
+            </div>
           )}
         </div>
 
         {blocked && (
           <div className="mt-6">
-            <p className="border border-dashed border-white/20 bg-white/5 px-3 py-2 text-[13px] text-signal-hold">
+            <p className="border border-dashed border-white/20 bg-white/5 px-3 py-2 text-body-sm text-signal-hold">
               Draft AI cannot enter this plate.
             </p>
-            <button type="button" onClick={onCancel} className="mt-4 px-4 py-2.5 text-[13px] text-paper/70">
+            <button type="button" onClick={onCancel} className="mt-4 px-4 py-2.5 text-body-sm text-paper/70">
               Withdraw
             </button>
           </div>
@@ -109,11 +127,11 @@ export function CertifyRitual({
             <button
               type="button"
               onClick={() => setStep("sign")}
-              className="bg-paper px-4 py-2.5 text-[13px] font-medium text-ink"
+              className="bg-paper px-4 py-2.5 text-body font-medium text-ink hover:bg-ice"
             >
               I have read this
             </button>
-            <button type="button" onClick={onCancel} className="px-4 py-2.5 text-[13px] text-paper/70">
+            <button type="button" onClick={onCancel} className="px-4 py-2.5 text-body text-paper/70">
               Cancel
             </button>
           </div>
@@ -121,24 +139,25 @@ export function CertifyRitual({
 
         {!blocked && step === "sign" && (
           <div className="mt-6">
-            <p className="text-[13px] text-paper/70">I certify this as {named}.</p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={seat}
-                className="bg-paper px-4 py-2.5 text-[13px] font-medium text-ink transition-transform duration-150 active:scale-[0.97]"
-              >
-                Certify
-              </button>
-              <button type="button" onClick={onCancel} className="px-4 py-2.5 text-[13px] text-paper/70">
-                Withdraw
-              </button>
-            </div>
+            <p className="text-body-sm text-paper/70">
+              I {verb === "Issue" ? "issue" : "certify"} this as {named}.
+            </p>
+            <button
+              type="button"
+              onClick={seat}
+              className="signature-press mt-4 w-full"
+            >
+              <span className="font-serif text-2xl leading-none">{holder}</span>
+              <span className="label-track mt-2 block text-ink/50">Press to {verb.toLowerCase()}</span>
+            </button>
+            <button type="button" onClick={onCancel} className="mt-3 px-4 py-2.5 text-body text-paper/70">
+              Withdraw
+            </button>
           </div>
         )}
 
         {!blocked && step === "done" && (
-          <p className="mt-6 font-serif text-xl text-ice">Recorded on the ledger.</p>
+          <p className="mt-6 font-serif text-xl text-ice">Named on the record.</p>
         )}
       </div>
     </div>
