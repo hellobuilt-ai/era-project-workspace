@@ -21,16 +21,27 @@ export const navItems: NavItem[] = [
   { to: "/desk", label: "Draft desk", short: "Dr", lenses: ["era"] },
 ];
 
-/** Instruments that belong to a stage chapter — the rest sit under Elsewhere. */
-export const chapterOf: Record<StageId, string[]> = {
-  lease: ["/lease", "/people"],
-  strategic: ["/", "/fees", "/documents", "/people", "/desk"],
-  brief: ["/brief", "/", "/documents"],
-  design: ["/design", "/people", "/documents"],
-  procure: ["/packages", "/fees", "/documents"],
-  construct: ["/programme", "/documents"],
-  handover: ["/handover", "/fees", "/documents"],
+/** The single instrument that belongs to a stage. Sequence numbers stay on 00–06 only. */
+export const stageInstrument: Record<StageId, string> = {
+  lease: "/lease",
+  strategic: "/",
+  brief: "/brief",
+  design: "/design",
+  procure: "/packages",
+  construct: "/programme",
+  handover: "/handover",
 };
+
+const PRACTICE_PATHS = ["/fees", "/people", "/documents", "/desk"];
+
+export function instrumentItem(stage: StageId): NavItem {
+  const path = stageInstrument[stage];
+  return navItems.find((n) => n.to === path) ?? navItems[0];
+}
+
+export function practiceItems(lens: Lens): NavItem[] {
+  return navItems.filter((n) => PRACTICE_PATHS.includes(n.to) && n.lenses.includes(lens));
+}
 
 export const lensMeta: Record<
   Lens,
