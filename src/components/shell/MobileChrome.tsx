@@ -3,9 +3,7 @@ import { useEffect, useRef } from "react";
 import { useEra } from "@/lib/era/store";
 import { useStageProgress } from "@/lib/era/progress";
 import { adjacentStages } from "@/lib/era/stages";
-import { SequenceSpine } from "@/components/record/SequenceSpine";
-import { FolioPanel } from "./FolioPanel";
-import { InvitationSeal } from "./InvitationSeal";
+import { SideNav } from "./SideNav";
 
 export function MobileTop() {
   const { live, currentStage, qualityCertified, setFocusDecision, decisions } = useStageProgress();
@@ -48,12 +46,7 @@ export function MobileDock({ onContents }: { onContents: () => void }) {
   return (
     <div className="mobile-dock">
       {!guest && closeGate ? (
-        <Link
-          to="/"
-          hash="decision-d3"
-          onClick={() => setFocusDecision("d3")}
-          className="dock-act"
-        >
+        <Link to="/" hash="decision-d3" onClick={() => setFocusDecision("d3")} className="dock-act">
           Close 01
         </Link>
       ) : !guest && next ? (
@@ -64,7 +57,7 @@ export function MobileDock({ onContents }: { onContents: () => void }) {
         <span className="dock-act is-quiet">{live.n} live</span>
       )}
       <button type="button" onClick={onContents} className="dock-btn">
-        Contents
+        Menu
       </button>
       <button type="button" onClick={() => setCommandOpen(true)} className="dock-btn">
         Desk
@@ -76,20 +69,13 @@ export function MobileDock({ onContents }: { onContents: () => void }) {
 export function MobileDrawer({
   open,
   pathname,
-  inviteOpen,
-  onInvite,
-  onInviteClose,
   onClose,
 }: {
   open: boolean;
   pathname: string;
-  inviteOpen: boolean;
-  onInvite: () => void;
-  onInviteClose: () => void;
   onClose: () => void;
 }) {
   const panel = useRef<HTMLDivElement>(null);
-  const { lens } = useStageProgress();
 
   useEffect(() => {
     if (!open) return;
@@ -120,27 +106,14 @@ export function MobileDrawer({
 
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
-      <button type="button" className="drawer-scrim scrim absolute inset-0" aria-label="Close contents" onClick={onClose} />
+      <button type="button" className="drawer-scrim scrim absolute inset-0" aria-label="Close menu" onClick={onClose} />
       <div ref={panel} className="drawer-panel mobile-drawer">
-        <div className="flex items-center justify-between px-4 pt-4">
-          <p className="label-track text-paper/40">Contents</p>
-          <button type="button" onClick={onClose} className="hit-44 px-2 font-mono text-micro text-paper/50 hover:text-paper">
+        <div className="flex justify-end px-2 pt-2">
+          <button type="button" onClick={onClose} className="hit-44 px-3 font-mono text-micro text-paper/50 hover:text-paper">
             Close
           </button>
         </div>
-        <div className="mt-4 px-3">
-          <SequenceSpine pathname={pathname} onNavigate={onClose} compact />
-        </div>
-        <FolioPanel pathname={pathname} onClose={onClose} onNavigate={onClose} embedded />
-        <div className="mt-auto border-t border-white/10 px-4 py-3">
-          <InvitationSeal
-            lens={lens}
-            open={inviteOpen}
-            onToggle={onInvite}
-            onClose={onInviteClose}
-            placement="line"
-          />
-        </div>
+        <SideNav pathname={pathname} onNavigate={onClose} />
       </div>
     </div>
   );

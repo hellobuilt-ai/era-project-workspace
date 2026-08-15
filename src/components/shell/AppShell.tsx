@@ -2,12 +2,10 @@ import { Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useEra } from "@/lib/era/store";
 import { CommandPalette } from "./CommandPalette";
-import { PracticeRail } from "./PracticeRail";
-import { FolioPanel } from "./FolioPanel";
+import { AppSidebar } from "./AppSidebar";
 import { MobileDock, MobileDrawer, MobileTop } from "./MobileChrome";
 import { StagePassage } from "@/components/record/StagePassage";
 import { PulseBar } from "@/components/record/PulseBar";
-import { SequenceSpine } from "@/components/record/SequenceSpine";
 import { ReturnSlip } from "@/components/record/ReturnSlip";
 import { SequenceFilm } from "@/components/record/SequenceFilm";
 import { StageCompare } from "@/components/record/StageCompare";
@@ -21,39 +19,11 @@ export function AppShell() {
   const { currentStage, decisions } = useStageProgress();
   const navigate = useNavigate();
   const [slip, setSlip] = useState<{ sinceLeft: boolean } | null>(null);
-  const [folio, setFolio] = useState(false);
-  const [invite, setInvite] = useState(false);
-  const [studio, setStudio] = useState(false);
   const [drawer, setDrawer] = useState(false);
 
-  const chromeOpen = commandOpen || passage || filmOpen || folio || invite || studio || drawer;
-
-  function closePops() {
-    setInvite(false);
-    setStudio(false);
-  }
-
-  function toggleFolio() {
-    closePops();
-    setFolio((v) => !v);
-  }
-
-  function toggleInvite() {
-    setStudio(false);
-    setFolio(false);
-    setInvite((v) => !v);
-  }
-
-  function toggleStudio() {
-    setInvite(false);
-    setFolio(false);
-    setStudio((v) => !v);
-  }
+  const chromeOpen = commandOpen || passage || filmOpen || drawer;
 
   function closeAll() {
-    setFolio(false);
-    setInvite(false);
-    setStudio(false);
     setDrawer(false);
     setCompareWith(null);
   }
@@ -72,7 +42,7 @@ export function AppShell() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (folio || invite || studio || drawer || compareWith) {
+        if (drawer || compareWith) {
           e.preventDefault();
           closeAll();
         }
@@ -100,7 +70,7 @@ export function AppShell() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [chromeOpen, folio, invite, studio, drawer, compareWith, pathname, currentStage, navigate, setCompareWith]);
+  }, [chromeOpen, drawer, compareWith, pathname, currentStage, navigate, setCompareWith]);
 
   useEffect(() => {
     const waiting = decisions.some((d) => d.status === "open" || d.status === "countered");
@@ -114,7 +84,6 @@ export function AppShell() {
   }, []);
 
   useEffect(() => {
-    setFolio(false);
     setDrawer(false);
   }, [pathname]);
 
@@ -129,21 +98,12 @@ export function AppShell() {
 
       <div className="lg:flex">
         <div className="hidden lg:block">
-          <PracticeRail
-            folioOpen={folio}
-            inviteOpen={invite}
-            studioOpen={studio}
-            onFolio={toggleFolio}
-            onInvite={toggleInvite}
-            onStudio={toggleStudio}
-            onClosePop={closePops}
-          />
+          <AppSidebar pathname={pathname} />
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="chrome-sticky hidden lg:block">
             <PulseBar pathname={pathname} />
-            <SequenceSpine pathname={pathname} />
           </div>
 
           <MobileTop />
@@ -170,23 +130,7 @@ export function AppShell() {
         </div>
       </div>
 
-      {folio && (
-        <div className="hidden lg:block">
-          <FolioPanel pathname={pathname} onClose={() => setFolio(false)} onNavigate={() => setFolio(false)} />
-        </div>
-      )}
-
-      <MobileDrawer
-        open={drawer}
-        pathname={pathname}
-        inviteOpen={invite}
-        onInvite={toggleInvite}
-        onInviteClose={() => setInvite(false)}
-        onClose={() => {
-          setDrawer(false);
-          setInvite(false);
-        }}
-      />
+      <MobileDrawer open={drawer} pathname={pathname} onClose={() => setDrawer(false)} />
 
       <CommandPalette />
       <StagePassage />
