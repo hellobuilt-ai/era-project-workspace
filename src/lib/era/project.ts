@@ -1,4 +1,4 @@
-import type { Decision, Document, FeeLine, Person, Risk, StageId, Week } from "./types";
+import type { Decision, Document, Drawing, FeeLine, Package, Person, Risk, StageId, Week } from "./types";
 
 export const project = {
   code: "ERA-HV-26-014",
@@ -83,6 +83,152 @@ export const people: Person[] = [
   },
 ];
 
+export const leaseInstrument = {
+  address: "14 Saffron Hill, EC1N 8XA",
+  areaSqft: 18400,
+  occupation: "1 October 2026",
+  executed: "22 July 2026",
+  landlord: "Saffron Hill Freehold Ltd",
+  solicitor: "Saira Khan",
+  solicitorFirm: "Pritchard Hale",
+  occupiers: ["Amelia Croft", "James Lang"] as const,
+};
+
+export const drawings: Drawing[] = [
+  {
+    id: "dr1",
+    code: "HV-FAR-DRW-001",
+    title: "GA · fourth floor",
+    kind: "General arrangement",
+    rev: "A",
+    author: "Marcus Teale",
+    studio: "Studio North",
+    floor: "4",
+    note: "Client suite and two courts of meeting. Hospitality reception at the stair.",
+  },
+  {
+    id: "dr2",
+    code: "HV-FAR-DRW-002",
+    title: "GA · fifth floor",
+    kind: "General arrangement",
+    rev: "A",
+    author: "Marcus Teale",
+    studio: "Studio North",
+    floor: "5",
+    note: "Quiet floor and knowledge work. Partners’ rooms along the west light.",
+  },
+  {
+    id: "dr3",
+    code: "HV-FAR-DRW-003",
+    title: "Reception · hospitality",
+    kind: "Interior",
+    rev: "A",
+    author: "Marcus Teale",
+    studio: "Studio North",
+    floor: "4",
+    note: "Forty-cover supper. Timber and stone. Not a lobby.",
+  },
+  {
+    id: "dr4",
+    code: "HV-FAR-DRW-004",
+    title: "Partners’ joinery",
+    kind: "Joinery",
+    rev: "A",
+    author: "Marcus Teale",
+    studio: "Studio North",
+    floor: "5",
+    note: "Upper-quartile finish. The band Henry certified.",
+  },
+  {
+    id: "dr5",
+    code: "HV-FAR-DRW-005",
+    title: "MEP overlay",
+    kind: "Services",
+    rev: "A",
+    author: "Marcus Teale",
+    studio: "Studio North",
+    floor: null,
+    note: "Mains and containment against both GAs. First fix weeks 03–06.",
+  },
+];
+
+export const packages: Package[] = [
+  {
+    id: "pk1",
+    code: "HV-FAR-PKG-01",
+    title: "Strip-out & enabling",
+    amount: 185000,
+    contractor: "Kerrigan",
+    trade: "Enabling",
+  },
+  {
+    id: "pk2",
+    code: "HV-FAR-PKG-02",
+    title: "Partitions & drylining",
+    amount: 420000,
+    contractor: "Northbank Interiors",
+    trade: "Partitions",
+  },
+  {
+    id: "pk3",
+    code: "HV-FAR-PKG-03",
+    title: "Mechanical & electrical",
+    amount: 980000,
+    contractor: "Hale Mechanical",
+    trade: "Mechanical",
+  },
+  {
+    id: "pk4",
+    code: "HV-FAR-PKG-04",
+    title: "Ceilings & raised floor",
+    amount: 340000,
+    contractor: "Pell Ceilings",
+    trade: "Ceilings",
+  },
+  {
+    id: "pk5",
+    code: "HV-FAR-PKG-05",
+    title: "Joinery · partners & reception",
+    amount: 465000,
+    contractor: "Marlow & Son",
+    trade: "Joinery",
+  },
+  {
+    id: "pk6",
+    code: "HV-FAR-PKG-06",
+    title: "Stone & hospitality finishes",
+    amount: 390000,
+    contractor: "Vico Stone",
+    trade: "Stone",
+  },
+  {
+    id: "pk7",
+    code: "HV-FAR-PKG-07",
+    title: "AV, acoustics & containment",
+    amount: 285000,
+    contractor: "Arbour AV",
+    trade: "AV",
+  },
+  {
+    id: "pk8",
+    code: "HV-FAR-PKG-08",
+    title: "Furniture & FF&E",
+    amount: 310000,
+    contractor: "Kin Contract",
+    trade: "Furniture",
+  },
+  {
+    id: "pk9",
+    code: "HV-FAR-PKG-09",
+    title: "Prelims · principal contractor",
+    amount: 565000,
+    contractor: "Ashworth & Co",
+    trade: "Prelims",
+  },
+];
+
+export const PACKAGE_SUM = 3_940_000;
+
 export const fees: FeeLine[] = [
   {
     id: "f1",
@@ -132,7 +278,7 @@ export const decisions: Decision[] = [
   },
   {
     id: "d2",
-    title: "Fee proposal — PM + Cost",
+    title: "Fee proposal · PM + Cost",
     body: "PM at 2.75% capped against the £4.125m cost plan. Cost consultancy as a fixed £42,000 through practical completion. Named to Evans and Geldenhuys.",
     status: "certified",
     feeNamed: "£155,438",
@@ -155,7 +301,7 @@ export const decisions: Decision[] = [
   {
     id: "d4",
     title: "Landlord licence programme",
-    body: "Draft pack ready for Pritchard Hale. AI assembled the schedule of condition index — unsigned, awaiting Evans.",
+    body: "Draft pack ready for Pritchard Hale. AI assembled the schedule of condition index, unsigned, awaiting Evans.",
     status: "countered",
     feeNamed: "£6,500",
     namedBy: "Draft desk",
@@ -168,7 +314,7 @@ export const decisions: Decision[] = [
 export const documents: Document[] = [
   {
     id: "doc1",
-    title: "Strategic brief — space, budget, programme, quality",
+    title: "Strategic brief · space, budget, programme, quality",
     kind: "Brief",
     rev: "C",
     stamp: "issued",
@@ -180,7 +326,7 @@ export const documents: Document[] = [
   },
   {
     id: "doc2",
-    title: "Fee proposal — named people, named fees",
+    title: "Fee proposal · named people, named fees",
     kind: "Commercial",
     rev: "B",
     stamp: "certified",
@@ -192,7 +338,7 @@ export const documents: Document[] = [
   },
   {
     id: "doc3",
-    title: "Cost plan 01 — elemental",
+    title: "Cost plan 01 · elemental",
     kind: "Cost",
     rev: "01",
     stamp: "issued",
@@ -204,7 +350,7 @@ export const documents: Document[] = [
   },
   {
     id: "doc4",
-    title: "Landlord licence — draft pack",
+    title: "Landlord licence · draft pack",
     kind: "Legal",
     rev: "A",
     stamp: "draft",
@@ -216,7 +362,7 @@ export const documents: Document[] = [
   },
   {
     id: "doc5",
-    title: "Programme — 14 weeks on site",
+    title: "Programme · 14 weeks on site",
     kind: "Programme",
     rev: "B",
     stamp: "issued",
@@ -227,9 +373,9 @@ export const documents: Document[] = [
   },
   {
     id: "doc6",
-    title: "Internal cost note — risk on stone",
+    title: "Internal cost note · risk on stone",
     kind: "Note",
-    rev: "—",
+    rev: "·",
     stamp: "internal",
     pages: 1,
     updated: "13 Aug 2026",
@@ -251,7 +397,7 @@ export const weeks: Week[] = [
   { id: 10, label: "W10", phase: "Second fix", note: "Furniture install", status: "later" },
   { id: 11, label: "W11", phase: "Commission", note: "Test and witness", status: "later" },
   { id: 12, label: "W12", phase: "Commission", note: "Client snag", status: "later" },
-  { id: 13, label: "W13", phase: "Soft landing", note: "Staff induction", status: "later" },
+  { id: 13, label: "W13", phase: "Soft landing", note: "Staff return · induction", status: "later" },
   { id: 14, label: "W14", phase: "Handover", note: "PC and thrive start", status: "later" },
 ];
 

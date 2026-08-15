@@ -61,6 +61,27 @@ export type Week = {
   status: "done" | "live" | "next" | "later";
 };
 
+export type Drawing = {
+  id: string;
+  code: string;
+  title: string;
+  kind: "General arrangement" | "Interior" | "Joinery" | "Services";
+  rev: string;
+  author: string;
+  studio: string;
+  floor: string | null;
+  note: string;
+};
+
+export type Package = {
+  id: string;
+  code: string;
+  title: string;
+  amount: number;
+  contractor: string;
+  trade: string;
+};
+
 export type Risk = {
   id: string;
   title: string;

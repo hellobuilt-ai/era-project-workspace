@@ -13,11 +13,16 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppBriefRouteImport } from './routes/_app/brief'
+import { Route as AppDesignRouteImport } from './routes/_app/design'
 import { Route as AppDeskRouteImport } from './routes/_app/desk'
 import { Route as AppDocumentsRouteImport } from './routes/_app/documents'
 import { Route as AppFeesRouteImport } from './routes/_app/fees'
+import { Route as AppHandoverRouteImport } from './routes/_app/handover'
+import { Route as AppLeaseRouteImport } from './routes/_app/lease'
+import { Route as AppPackagesRouteImport } from './routes/_app/packages'
 import { Route as AppPeopleRouteImport } from './routes/_app/people'
 import { Route as AppProgrammeRouteImport } from './routes/_app/programme'
+import { Route as AppStageStageIdRouteImport } from './routes/_app/stage.$stageId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const AppRoute = AppRouteImport.update({
@@ -39,6 +44,11 @@ const AppBriefRoute = AppBriefRouteImport.update({
   path: '/brief',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDesignRoute = AppDesignRouteImport.update({
+  id: '/design',
+  path: '/design',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDeskRoute = AppDeskRouteImport.update({
   id: '/desk',
   path: '/desk',
@@ -54,6 +64,21 @@ const AppFeesRoute = AppFeesRouteImport.update({
   path: '/fees',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHandoverRoute = AppHandoverRouteImport.update({
+  id: '/handover',
+  path: '/handover',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLeaseRoute = AppLeaseRouteImport.update({
+  id: '/lease',
+  path: '/lease',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPackagesRoute = AppPackagesRouteImport.update({
+  id: '/packages',
+  path: '/packages',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPeopleRoute = AppPeopleRouteImport.update({
   id: '/people',
   path: '/people',
@@ -62,6 +87,11 @@ const AppPeopleRoute = AppPeopleRouteImport.update({
 const AppProgrammeRoute = AppProgrammeRouteImport.update({
   id: '/programme',
   path: '/programme',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStageStageIdRoute = AppStageStageIdRouteImport.update({
+  id: '/stage/$stageId',
+  path: '/stage/$stageId',
   getParentRoute: () => AppRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -74,22 +104,32 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/login': typeof LoginRoute
   '/brief': typeof AppBriefRoute
+  '/design': typeof AppDesignRoute
   '/desk': typeof AppDeskRoute
   '/documents': typeof AppDocumentsRoute
   '/fees': typeof AppFeesRoute
+  '/handover': typeof AppHandoverRoute
+  '/lease': typeof AppLeaseRoute
+  '/packages': typeof AppPackagesRoute
   '/people': typeof AppPeopleRoute
   '/programme': typeof AppProgrammeRoute
+  '/stage/$stageId': typeof AppStageStageIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/brief': typeof AppBriefRoute
+  '/design': typeof AppDesignRoute
   '/desk': typeof AppDeskRoute
   '/documents': typeof AppDocumentsRoute
   '/fees': typeof AppFeesRoute
+  '/handover': typeof AppHandoverRoute
+  '/lease': typeof AppLeaseRoute
+  '/packages': typeof AppPackagesRoute
   '/people': typeof AppPeopleRoute
   '/programme': typeof AppProgrammeRoute
   '/': typeof AppIndexRoute
+  '/stage/$stageId': typeof AppStageStageIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -97,12 +137,17 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/_app/brief': typeof AppBriefRoute
+  '/_app/design': typeof AppDesignRoute
   '/_app/desk': typeof AppDeskRoute
   '/_app/documents': typeof AppDocumentsRoute
   '/_app/fees': typeof AppFeesRoute
+  '/_app/handover': typeof AppHandoverRoute
+  '/_app/lease': typeof AppLeaseRoute
+  '/_app/packages': typeof AppPackagesRoute
   '/_app/people': typeof AppPeopleRoute
   '/_app/programme': typeof AppProgrammeRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/stage/$stageId': typeof AppStageStageIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
@@ -111,34 +156,49 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/brief'
+    | '/design'
     | '/desk'
     | '/documents'
     | '/fees'
+    | '/handover'
+    | '/lease'
+    | '/packages'
     | '/people'
     | '/programme'
+    | '/stage/$stageId'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/brief'
+    | '/design'
     | '/desk'
     | '/documents'
     | '/fees'
+    | '/handover'
+    | '/lease'
+    | '/packages'
     | '/people'
     | '/programme'
     | '/'
+    | '/stage/$stageId'
     | '/api/auth/$'
   id:
     | '__root__'
     | '/_app'
     | '/login'
     | '/_app/brief'
+    | '/_app/design'
     | '/_app/desk'
     | '/_app/documents'
     | '/_app/fees'
+    | '/_app/handover'
+    | '/_app/lease'
+    | '/_app/packages'
     | '/_app/people'
     | '/_app/programme'
     | '/_app/'
+    | '/_app/stage/$stageId'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
@@ -178,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBriefRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/design': {
+      id: '/_app/design'
+      path: '/design'
+      fullPath: '/design'
+      preLoaderRoute: typeof AppDesignRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/desk': {
       id: '/_app/desk'
       path: '/desk'
@@ -199,6 +266,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFeesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/handover': {
+      id: '/_app/handover'
+      path: '/handover'
+      fullPath: '/handover'
+      preLoaderRoute: typeof AppHandoverRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/lease': {
+      id: '/_app/lease'
+      path: '/lease'
+      fullPath: '/lease'
+      preLoaderRoute: typeof AppLeaseRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/packages': {
+      id: '/_app/packages'
+      path: '/packages'
+      fullPath: '/packages'
+      preLoaderRoute: typeof AppPackagesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/people': {
       id: '/_app/people'
       path: '/people'
@@ -213,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProgrammeRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/stage/$stageId': {
+      id: '/_app/stage/$stageId'
+      path: '/stage/$stageId'
+      fullPath: '/stage/$stageId'
+      preLoaderRoute: typeof AppStageStageIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -225,22 +320,32 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppBriefRoute: typeof AppBriefRoute
+  AppDesignRoute: typeof AppDesignRoute
   AppDeskRoute: typeof AppDeskRoute
   AppDocumentsRoute: typeof AppDocumentsRoute
   AppFeesRoute: typeof AppFeesRoute
+  AppHandoverRoute: typeof AppHandoverRoute
+  AppLeaseRoute: typeof AppLeaseRoute
+  AppPackagesRoute: typeof AppPackagesRoute
   AppPeopleRoute: typeof AppPeopleRoute
   AppProgrammeRoute: typeof AppProgrammeRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppStageStageIdRoute: typeof AppStageStageIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppBriefRoute: AppBriefRoute,
+  AppDesignRoute: AppDesignRoute,
   AppDeskRoute: AppDeskRoute,
   AppDocumentsRoute: AppDocumentsRoute,
   AppFeesRoute: AppFeesRoute,
+  AppHandoverRoute: AppHandoverRoute,
+  AppLeaseRoute: AppLeaseRoute,
+  AppPackagesRoute: AppPackagesRoute,
   AppPeopleRoute: AppPeopleRoute,
   AppProgrammeRoute: AppProgrammeRoute,
   AppIndexRoute: AppIndexRoute,
+  AppStageStageIdRoute: AppStageStageIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
