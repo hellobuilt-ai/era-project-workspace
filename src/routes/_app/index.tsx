@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { project, risks, briefClauses } from "@/lib/era/project";
 import { useEra } from "@/lib/era/store";
 import { lensMeta } from "@/lib/era/nav";
-import { gbp } from "@/lib/utils";
+import { cn, gbp } from "@/lib/utils";
 import { Stamp } from "@/components/record/Stamp";
 import { CertifyRitual } from "@/components/record/CertifyRitual";
 import { FilmStill, PunchStats } from "@/components/record/FilmStill";
@@ -11,13 +11,13 @@ import { StageNextCue, StageRail } from "@/components/record/StageRail";
 import { stills } from "@/lib/era/stills";
 import { useStageProgress } from "@/lib/era/progress";
 import { QUALITY_ID, canCertifyDecision, stageIndex } from "@/lib/era/stages";
-import { cn } from "@/lib/utils";
+import { FloorPlate } from "@/components/record/FloorPlate";
 
 export const Route = createFileRoute("/_app/")({ component: RecordCover });
 
 function RecordCover() {
   const { lens, decisions, certify, focusDecision, setFocusDecision } = useEra();
-  const { currentStage, live, qualityCertified, next } = useStageProgress();
+  const { currentStage, live, qualityCertified } = useStageProgress();
   const meta = lensMeta[lens];
   const [ritual, setRitual] = useState<string | null>(null);
   const [openBand, setOpenBand] = useState(false);
@@ -31,6 +31,10 @@ function RecordCover() {
 
   useEffect(() => {
     const hash = typeof window !== "undefined" ? window.location.hash.replace("#", "") : "";
+    if (hash === "floor") {
+      document.getElementById("floor")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     const aim = focusDecision ?? (hash.startsWith("decision-") ? hash.slice("decision-".length) : null);
     if (!aim) return;
     const node = document.getElementById(`decision-${aim}`);
@@ -76,7 +80,7 @@ function RecordCover() {
                   ? "CAT B fit-out. Absolute cost certainty. One sentence still holds 01 — the quality band on the partners’ floor. Certify it, and 02 Brief becomes the live stage."
                   : "Quality is certified. 01 is on the record. The brief is now the live instrument — not a PDF that outranks it."}
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
               {leaseLive ? (
                 <>
                   <Link
@@ -85,7 +89,7 @@ function RecordCover() {
                   >
                     Confirm the lease →
                   </Link>
-                  <p className="mt-3 max-w-md text-body-sm text-paper/55">
+                  <p className="max-w-md text-body-sm text-paper/55">
                     The instrument is executed. Confirmation opens 01.
                   </p>
                 </>
@@ -98,16 +102,9 @@ function RecordCover() {
                   >
                     Close 01 — certify the quality band →
                   </a>
-                  <p className="mt-3 max-w-md text-body-sm text-paper/55">
-                    That is the door. You may read 02 while it is being drawn; you cannot make it live
-                    until this sentence is signed.
-                  </p>
-                  <Link
-                    to="/brief"
-                    className="mt-3 inline-flex min-h-11 items-center label-track text-ice hover:text-paper"
-                  >
-                    Read 02 while it is being drawn →
-                  </Link>
+                  <a href="#floor" className="label-track text-ice hover:text-paper">
+                    Walk the floor →
+                  </a>
                 </>
               ) : (
                 <>
@@ -118,11 +115,9 @@ function RecordCover() {
                   >
                     Enter {live.n} {live.label} →
                   </Link>
-                  <p className="mt-3 max-w-md text-body-sm text-paper/55">
-                    {next
-                      ? `The sequence has moved. ${live.n} is live. ${next.n} ${next.label} waits on its own gate.`
-                      : "The sequence is complete. The record stays issued."}
-                  </p>
+                  <a href="#floor" className="label-track text-ice hover:text-paper">
+                    Walk the floor →
+                  </a>
                 </>
               )}
             </div>
@@ -165,6 +160,17 @@ function RecordCover() {
           ]}
         />
       </div>
+
+      <section id="floor" className="scroll-mt-16 border-t border-hairline bg-warm">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-8 lg:px-12 lg:py-14">
+          <p className="label-track text-petrol">The floor itself</p>
+          <h2 className="mt-1 font-display text-[length:var(--text-display-md)]">14 Saffron Hill</h2>
+          <p className="standfirst mt-3 text-muted">
+            Two floors. Named rooms. The brief is the plan — not a PDF pinned to a wall.
+          </p>
+          <FloorPlate />
+        </div>
+      </section>
 
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:px-12 lg:py-14">
         <div>

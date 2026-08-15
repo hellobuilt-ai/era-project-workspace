@@ -10,6 +10,11 @@ export type StagePassage = {
   to: StageId;
 };
 
+export type VisitMark = {
+  at: number;
+  stage: StageId;
+};
+
 type EraState = {
   lens: Lens;
   setLens: (lens: Lens) => void;
@@ -33,6 +38,8 @@ type EraState = {
   replayFrom: (id: StageId) => void;
   clearPassage: () => void;
   resetSequence: () => void;
+  visit: VisitMark | null;
+  markVisit: (stage: StageId) => void;
 };
 
 const INITIAL_ISSUED: Partial<Record<StageId, boolean>> = { lease: true };
@@ -135,6 +142,8 @@ export const useEra = create<EraState>()(
       replayFrom: (id) => set(seedFor(id)),
       clearPassage: () => set({ passage: null }),
       resetSequence: () => get().replayFrom("strategic"),
+      visit: null,
+      markVisit: (stage) => set({ visit: { at: Date.now(), stage } }),
     }),
     {
       name: "era-record-v3",
@@ -145,6 +154,7 @@ export const useEra = create<EraState>()(
         issued: s.issued,
         constructWeek: s.constructWeek,
         thriveIssued: s.thriveIssued,
+        visit: s.visit,
       }),
     },
   ),

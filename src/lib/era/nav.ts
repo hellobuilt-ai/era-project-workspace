@@ -1,4 +1,4 @@
-import type { Lens } from "./types";
+import type { Lens, StageId } from "./types";
 
 export type NavItem = {
   to: string;
@@ -20,6 +20,17 @@ export const navItems: NavItem[] = [
   { to: "/people", label: "People", short: "Pe", lenses: ["era", "client"] },
   { to: "/desk", label: "Draft desk", short: "Dr", lenses: ["era"] },
 ];
+
+/** Instruments that belong to a stage chapter — the rest sit under Elsewhere. */
+export const chapterOf: Record<StageId, string[]> = {
+  lease: ["/lease", "/people"],
+  strategic: ["/", "/fees", "/documents", "/people", "/desk"],
+  brief: ["/brief", "/", "/documents"],
+  design: ["/design", "/people", "/documents"],
+  procure: ["/packages", "/fees", "/documents"],
+  construct: ["/programme", "/documents"],
+  handover: ["/handover", "/fees", "/documents"],
+};
 
 export const lensMeta: Record<
   Lens,

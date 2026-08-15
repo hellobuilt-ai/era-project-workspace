@@ -5,9 +5,10 @@ import { decisions, documents, fees, project } from "@/lib/era/project";
 import { navItems } from "@/lib/era/nav";
 import { stageList, stageTone, toneLabel } from "@/lib/era/stages";
 import { cn, gbp } from "@/lib/utils";
+import { rooms } from "@/lib/era/floor";
 import { useStageProgress } from "@/lib/era/progress";
 
-type DeskGroup = "Needs you" | "Stage" | "Record" | "Fees" | "Evidence";
+type DeskGroup = "Needs you" | "Stage" | "Floor" | "Record" | "Fees" | "Evidence";
 
 type DeskItem = {
   id: string;
@@ -15,10 +16,11 @@ type DeskItem = {
   hint: string;
   to: string;
   params?: { stageId: string };
+  hash?: string;
   group: DeskGroup;
 };
 
-const GROUP_ORDER: DeskGroup[] = ["Needs you", "Stage", "Record", "Fees", "Evidence"];
+const GROUP_ORDER: DeskGroup[] = ["Needs you", "Stage", "Floor", "Record", "Fees", "Evidence"];
 
 export function CommandPalette() {
   const { commandOpen, setCommandOpen, lens, decisions: liveDecisions } = useEra();
@@ -86,6 +88,25 @@ export function CommandPalette() {
         to: "/",
         group: "Stage",
       });
+      desk.push({
+        id: "walk-floor",
+        label: "Walk the floor",
+        hint: "14 Saffron Hill",
+        to: "/",
+        hash: "floor",
+        group: "Floor",
+      });
+      for (const room of rooms) {
+        desk.push({
+          id: `room-${room.id}`,
+          label: room.name,
+          hint: room.drawing,
+          to: room.to,
+          params: room.params,
+          hash: room.hash,
+          group: "Floor",
+        });
+      }
     }
 
     desk.push({
@@ -190,13 +211,13 @@ export function CommandPalette() {
       close();
       return;
     }
-    if (item.id === "d3") {
+    if (item.id === "d3" || item.hash === "decision-d3") {
       setFocusDecision("d3");
     }
     if (item.params) {
       void navigate({ to: item.to, params: item.params });
     } else {
-      void navigate({ to: item.to, hash: item.id === "d3" ? "decision-d3" : undefined });
+      void navigate({ to: item.to, hash: item.hash });
     }
     close();
   }
